@@ -6,3 +6,5 @@ pytest-html==2.1.1
 pytest-metadata==1.8.0
 pytest-watch
 pytest-notifier
+build
+twine

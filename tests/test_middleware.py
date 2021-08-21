@@ -1,5 +1,5 @@
-from middleware import Middleware
-from stack import Stack
+from service_flow.middleware import Middleware
+from service_flow.stack import Stack
 
 
 class InplaceModification(Middleware):

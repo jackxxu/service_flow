@@ -1,4 +1,4 @@
-import stack
+from service_flow import stack
 
 
 class Middleware():
