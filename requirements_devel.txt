@@ -1,0 +1,8 @@
+bpython
+ipdb
+pytest==5.4.1
+pytest-env==0.6.2
+pytest-html==2.1.1
+pytest-metadata==1.8.0
+pytest-watch
+pytest-notifier
