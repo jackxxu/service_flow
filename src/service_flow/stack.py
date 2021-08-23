@@ -1,5 +1,9 @@
 import inspect
 from types import LambdaType
+from service_flow.exceptions import StopFlowException
+import logging
+
+logger = logging.getLogger(__name__)
 
 class Fork():
     def __init__(self, fork_var: str, fork_conditions: dict):
@@ -20,7 +24,12 @@ class Stack():
     def __call__(self, context: dict):
         for middleware, kw_nms in self.middlewares:
             kwargs = {key: context[key] for key in kw_nms}
-            context_mods = middleware(**kwargs)
+            try:
+                context_mods = middleware(**kwargs)
+            except StopFlowException as sfe:
+                logger.warn(f'stop processing all the middlewares due to StopFlowException {sfe}')
+                break
+
             if type(context_mods) == dict:
                 context.update(context_mods)
         return context
