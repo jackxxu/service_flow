@@ -22,16 +22,17 @@ class Stack():
         self._add_middleware(m1)
 
     def __call__(self, context: dict):
-        for middleware, kw_nms in self.middlewares:
-            kwargs = {key: context[key] for key in kw_nms}
-            try:
+        try:
+            for middleware, kw_nms in self.middlewares:
+                kwargs = {key: context[key] for key in kw_nms}
                 context_mods = middleware(**kwargs)
-            except StopFlowException as sfe:
-                logger.warn(f'stop processing all the middlewares due to StopFlowException {sfe}')
-                break
+                if type(context_mods) == dict:
+                    context.update(context_mods)
+                else:
+                    logger.warn(f"{type(middleware)}'s return value of type {type(context_mods)} is ignored in service-flow because it is not of type dict")
+        except StopFlowException as sfe:
+            logger.warn(f'stop processing all the middlewares due to StopFlowException {sfe}')
 
-            if type(context_mods) == dict:
-                context.update(context_mods)
         return context
 
     def __rshift__(self, middleware):
