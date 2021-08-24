@@ -29,9 +29,9 @@ class Stack():
                 if type(context_mods) == dict:
                     context.update(context_mods)
                 else:
-                    logger.warn(f"{type(middleware)}'s return value of type {type(context_mods)} is ignored in service-flow because it is not of type dict")
+                    logger.warning(f"{type(middleware)}'s return value of type {type(context_mods)} is ignored in service-flow because it is not of type dict")
         except StopFlowException as sfe:
-            logger.warn(f'stop processing all the middlewares due to StopFlowException {sfe}')
+            logger.warning(f'stop processing all the middlewares due to StopFlowException {sfe}')
 
         return context
 
