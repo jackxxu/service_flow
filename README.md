@@ -1,6 +1,6 @@
 # service-flow 
 
-<img src='https://www.worksmartsystems.com/images/C3_4StationL3.gif' width="25%" height="25%" align="right" />
+<img src='https://www.worksmartsystems.com/images/C3_4StationL3.gif' width="35%" height="35%" align="right" />
 
 A small, simple, and elegant component/function orchestration framework for Python, `service-flow` enables separation of a functionality into single-responsibility and bite-size functions/service objects, which are testable and reuseable. It further helps with readability and maintainability of the embedding application.
 
