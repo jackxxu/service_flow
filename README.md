@@ -31,7 +31,7 @@ a flow is the definition of processing procedure. It is defined as the following
 stack = Service1() >> \ 
         Service2(*args) >> \ 
         ... 
-        ServiceN() 
+        ServiceN(**kwargs) 
         
 output = stack(input) ## input is a dictionary with all the input parameters as attributes
 ```
@@ -78,9 +78,10 @@ the return value of a service is optional. If a service does return values:
 ## inspiration
 
 `service-flow` draws inspiration from the following Ruby projects:
- 
-1. [Light Service](https://github.com/adomokos/light-service)
-2. [Ruby Middleware](https://github.com/Ibsciss/ruby-middleware)
+
+1. [Rack](https://github.com/rack/rack) 
+2. [Light Service](https://github.com/adomokos/light-service)
+3. [Ruby Middleware](https://github.com/Ibsciss/ruby-middleware)
 
 ## TODOs
 
