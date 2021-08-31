@@ -6,9 +6,10 @@ A small, simple, and elegant component/function orchestration framework for Pyth
 
 - [Implementation](#implementation)
   - [flow](#flow)
-    - [example](#example)
+    - [simple example](#simple-example)
+    - [fork example](#fork-example)
   - [services](#services)
-    - [example](#example-1)
+    - [example](#example)
     - [conventions](#conventions)
       - [initializaition parameters](#initializaition-parameters)
       - [function parameters](#function-parameters)
