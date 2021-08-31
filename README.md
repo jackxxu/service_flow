@@ -25,7 +25,7 @@ A small, simple, and elegant component/function orchestration framework for Pyth
 
 a flow is the definition of processing procedure. It is defined as the following:
 
-#### example
+#### simple example
 
 ``` python
 stack = Service1() >> \ 
@@ -39,6 +39,25 @@ output = stack(input) ## input is a dictionary with all the input parameters as 
 Python `>>` operator is overloaded to define the sequeunce of the processing. `Service1()`, ..., `ServiceN()` are instances of the services, or functions.
 
 for each processing of the input, `service-flow` creates a **context**, a dictionary-like object that serves as input and gather outputs from all the services.
+
+
+#### fork example
+
+``` python
+stack = Service1() >> \ 
+        Service2(*args) < \ 
+        ('context_var_name', {
+            'var_value1': (Service3() >> Service4(**kwargs)),
+            'var_value2': (Service5() >> Service4(**kwargs)),
+          }
+        ) 
+        
+output = stack(input) ## input is a dictionary with all the input parameters as attributes
+```
+
+Python `<` operator is overloaded to define a fork in processing. In this example, `context_var_name` is the name of context key, and `var_value1`, `var_value2` are potential values for forking.
+
+
 
 ### services
 
@@ -84,9 +103,6 @@ the return value of a service is optional. If a service does return values:
 3. [Ruby Middleware](https://github.com/Ibsciss/ruby-middleware)
 
 ## TODOs
-
-1. implement forking
-
 
 ## install
 

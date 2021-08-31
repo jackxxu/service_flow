@@ -4,7 +4,7 @@ from service_flow.stack import Stack
 
 class InplaceModification(Middleware):
     def __init__(self, increment):
-        self.increment = 1
+        self.increment = increment
 
     def __call__(self, bar: list):
         return {'bar': [i + self.increment for i in bar]}
@@ -56,23 +56,32 @@ def test_lambda():
         'return_value': 'a'
     }
 
-
-def test_fork():
+def test_fork3():
     stack = SetScenario() < \
             ('scenario', {
-                'scenario1': lambda : {'results': '1'},
-                'scenario2': lambda : {'results': '2'},
+                'scenario1': (InplaceModification(1) >> AddContextVariable()),
+                'scenario2': (InplaceModification(2) >> AddContextVariable()),
                 })
-    assert stack({'scenario': 'scenario1'}) == {'results': '1', 'scenario': 'scenario1'}
-    assert stack({'scenario': 'scenario2'}) == {'results': '2', 'scenario': 'scenario2'}
+    assert stack({'scenario': 'scenario1', 'foo': 1, 'bar': [1, 2]}) == {'scenario': 'scenario1', 'foo': 1, 'bar': [2, 3], 'baz': 13}
+    assert stack({'scenario': 'scenario2', 'foo': 1, 'bar': [1, 2]}) == {'scenario': 'scenario2', 'foo': 1, 'bar': [3, 4], 'baz': 13}
 
 
-def test_fork2():
-    stack = SetScenario() >> \
-            (lambda scenario : {'value': scenario}) < \
-            ('scenario', {
-                'scenario1': lambda : {'results': '1'},
-                'scenario2': lambda : {'results': '2'},
-                })
-    assert stack({'scenario': 'scenario1'}) == {'results': '1', 'scenario': 'scenario1', 'value': 'scenario1'}
-    assert stack({'scenario': 'scenario2'}) == {'results': '2', 'scenario': 'scenario2', 'value': 'scenario2'}
+# def test_fork():
+#     stack = SetScenario() < \
+#             ('scenario', {
+#                 'scenario1': lambda : {'results': '1'},
+#                 'scenario2': lambda : {'results': '2'},
+#                 })
+#     assert stack({'scenario': 'scenario1'}) == {'results': '1', 'scenario': 'scenario1'}
+#     assert stack({'scenario': 'scenario2'}) == {'results': '2', 'scenario': 'scenario2'}
+
+
+# def test_fork2():
+#     stack = SetScenario() >> \
+#             (lambda scenario : {'value': scenario}) < \
+#             ('scenario', {
+#                 'scenario1': lambda : {'results': '1'},
+#                 'scenario2': lambda : {'results': '2'},
+#                 })
+#     assert stack({'scenario': 'scenario1'}) == {'results': '1', 'scenario': 'scenario1', 'value': 'scenario1'}
+#     assert stack({'scenario': 'scenario2'}) == {'results': '2', 'scenario': 'scenario2', 'value': 'scenario2'}

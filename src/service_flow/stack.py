@@ -2,6 +2,7 @@ import inspect
 from types import LambdaType
 from service_flow.exceptions import StopFlowException
 import logging
+import itertools
 
 logger = logging.getLogger(__name__)
 
@@ -10,10 +11,16 @@ class Fork():
         self.fork_var = fork_var
         self.fork_conditions = fork_conditions
 
-    def __call__(self, **kwargs):
-        value = kwargs[self.fork_var]
+    def __call__(self, **context):
+        value = context[self.fork_var]
         func = self.fork_conditions[value]
-        return func()
+        return func(context)
+
+    @property
+    def uniq_arguments(self):
+        list2d = [middleware[1] for _, stack in self.fork_conditions.items() for middleware in stack.middlewares]
+        list2d.append([self.fork_var])
+        return list(set(itertools.chain(*list2d)))
 
 
 class Stack():
@@ -26,7 +33,7 @@ class Stack():
             for middleware, kw_nms in self.middlewares:
                 kwargs = {key: context[key] for key in kw_nms}
                 context_mods = middleware(**kwargs)
-                if type(context_mods) == dict:
+                if isinstance(context_mods, dict):
                     context.update(context_mods)
                 elif context_mods != None:
                     logger.warning(f"{type(middleware)}'s return value of type {type(context_mods)} is ignored in service-flow because it is not of type dict")
@@ -50,7 +57,7 @@ class Stack():
         variable_nm = conditions[0]
         variable_conditions = conditions[1]
         fork = Fork(variable_nm, variable_conditions)
-        self.middlewares.append((fork, [variable_nm]))
+        self.middlewares.append((fork, fork.uniq_arguments))
         return self
 
     @staticmethod
