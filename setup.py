@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setuptools.setup(
     name="service_flow",
-    version="0.1.0",
+    version="0.1.1",
     author="Xiaosong Xu",
     author_email="jackxxu@gmail.com",
     description="service object flow orchestrator",

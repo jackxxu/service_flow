@@ -31,7 +31,7 @@ class Stack():
     def __call__(self, context: dict):
         try:
             for middleware, kw_nms in self.middlewares:
-                kwargs = {key: context[key] for key in kw_nms}
+                kwargs = {key: context[key] for key in kw_nms if key in context}
                 context_mods = middleware(**kwargs)
                 if isinstance(context_mods, dict):
                     context.update(context_mods)
