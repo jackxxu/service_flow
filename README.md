@@ -14,6 +14,7 @@ A small, simple, and elegant component/function orchestration framework for Pyth
       - [initializaition parameters](#initializaition-parameters)
       - [function parameters](#function-parameters)
       - [return value](#return-value)
+  - [exceptions](#exceptions)
 - [inspiration](#inspiration)
 - [TODOs](#todos)
 - [install](#install)
@@ -93,6 +94,15 @@ the return value of a service is optional. If a service does return values:
 
 1. if it is a dictionary, it will add/update the aforementioned processing *context*.
 2. otherwise, the return value is ignored and a warning message is logged.
+
+
+### exceptions
+
+`service-flow` raises a few types of exceptions:
+
+1. `StopFlowException`: raised inside a middleware to signal stop processing. typical use cases include when incoming request is invalid.  
+2. `RetryException`: raised inside a middleware to signal re-processing of the same request. typical use cases include when a http request issued from the middleware times out or database transaction level violation.
+3. `FatalException`: raised inside a middleware to restart the processor. typical use cases include when database connection is broken or other infrastructure related errors.
 
 
 ## inspiration
