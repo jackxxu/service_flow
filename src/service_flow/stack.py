@@ -1,6 +1,6 @@
 import inspect
 from types import LambdaType
-from service_flow.exceptions import StopFlowException
+from service_flow.exceptions import StopFlowException, ForkException
 import logging
 import itertools
 
@@ -13,7 +13,10 @@ class Fork():
 
     def __call__(self, **context):
         value = context[self.fork_var]
-        func = self.fork_conditions[value]
+        try:
+            func = self.fork_conditions[value]
+        except KeyError as e:
+            raise ForkException(f'value {value} does not match any fork key') from e
         return func(context)
 
     @property
@@ -39,6 +42,8 @@ class Stack():
                     logger.warning(f"{type(middleware)}'s return value of type {type(context_mods)} is ignored in service-flow because it is not of type dict")
         except StopFlowException as sfe:
             logger.warning(f'stop processing all the middlewares due to StopFlowException {sfe}')
+        except ForkException as fe:
+            logger.exception(f'stop processing all the middlewares due to StopFlowException {fe}')
 
         return context
 
