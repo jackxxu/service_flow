@@ -1,6 +1,7 @@
 import inspect
 from types import LambdaType
 from service_flow.exceptions import StopFlowException, ForkException
+from service_flow.timer import measure_timing
 import logging
 import itertools
 
@@ -30,7 +31,8 @@ class Stack():
     def __init__(self, m1):
         self.middlewares = []
         self._add_middleware(m1)
-
+    
+    @measure_timing
     def __call__(self, context: dict):
         try:
             for middleware, kw_nms in self.middlewares:
