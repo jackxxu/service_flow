@@ -33,7 +33,7 @@ class Stack():
         self._add_middleware(m1)
     
     @measure_timing
-    def __call__(self, context: dict):
+    def __call__(self, context: dict={}):
         try:
             for middleware, kw_nms in self.middlewares:
                 kwargs = {key: context[key] for key in kw_nms if key in context}
