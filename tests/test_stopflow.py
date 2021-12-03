@@ -1,7 +1,6 @@
 from service_flow.middleware import Middleware
-from service_flow.stack import Stack
 from service_flow.exceptions import StopFlowException
-
+import pytest
 
 class StopFlow(Middleware):
     def __call__(self):
@@ -11,5 +10,5 @@ class StopFlow(Middleware):
 def test_stopflow():
     stack = StopFlow() >>  \
             (lambda foo: {'return_value': foo})
-
-    assert stack({}) == {}
+    with pytest.raises(StopFlowException):   
+        stack({}) 

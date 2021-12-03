@@ -1,6 +1,6 @@
 from service_flow.middleware import Middleware
 from service_flow.stack import Stack
-from service_flow.exceptions import FatalException
+from service_flow.exceptions import ForkException
 import pytest
 
 
@@ -66,7 +66,9 @@ def test_fork3():
                 })
     assert stack({'scenario': 'scenario1', 'foo': 1, 'bar': [1, 2]}) == {'scenario': 'scenario1', 'foo': 1, 'bar': [2, 3], 'baz': 13}
     assert stack({'scenario': 'scenario2', 'foo': 1, 'bar': [1, 2]}) == {'scenario': 'scenario2', 'foo': 1, 'bar': [3, 4], 'baz': 13}
-    assert stack({'scenario': 'scenario3', 'foo': 1, 'bar': [1, 2]}) == {'scenario': 'scenario3', 'foo': 1, 'bar': [1, 2]}
+
+    with pytest.raises(ForkException):   
+        assert stack({'scenario': 'scenario3', 'foo': 1, 'bar': [1, 2]}) 
 
 # def test_fork():
 #     stack = SetScenario() < \

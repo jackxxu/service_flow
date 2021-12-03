@@ -34,18 +34,13 @@ class Stack():
     
     @measure_timing
     def __call__(self, context: dict={}):
-        try:
-            for middleware, kw_nms in self.middlewares:
-                kwargs = {key: context[key] for key in kw_nms if key in context}
-                context_mods = middleware(**kwargs)
-                if isinstance(context_mods, dict):
-                    context.update(context_mods)
-                elif context_mods != None:
-                    logger.warning(f"{type(middleware)}'s return value of type {type(context_mods)} is ignored in service-flow because it is not of type dict")
-        except StopFlowException as sfe:
-            logger.warning(f'stop processing all the middlewares due to StopFlowException {sfe}')
-        except ForkException as fe:
-            logger.exception(f'stop processing all the middlewares due to StopFlowException {fe}')
+        for middleware, kw_nms in self.middlewares:
+            kwargs = {key: context[key] for key in kw_nms if key in context}
+            context_mods = middleware(**kwargs)
+            if isinstance(context_mods, dict):
+                context.update(context_mods)
+            elif context_mods != None:
+                logger.warning(f"{type(middleware)}'s return value of type {type(context_mods)} is ignored in service-flow because it is not of type dict")
 
         return context
 
