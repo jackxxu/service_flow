@@ -8,7 +8,7 @@ class StopFlow(Middleware):
 
 
 def test_stopflow():
-    stack = StopFlow() >>  \
+    flow = StopFlow() >>  \
             (lambda foo: {'return_value': foo})
-    with pytest.raises(StopFlowException):   
-        stack({}) 
+    with pytest.raises(StopFlowException):
+        flow({})

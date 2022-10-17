@@ -11,6 +11,6 @@ def measure_timing(func):
         t1 = time()
         result = func(*args, **kwargs)
         t2 = time()
-        logger.info(f'stack execution completes in {(t2-t1):.4f}s')
+        logger.info(f'flow execution completes in {(t2-t1):.4f}s')
         return result
     return wrap_func
