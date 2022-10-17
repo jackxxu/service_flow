@@ -1,19 +1,21 @@
-from service_flow import stack
+from service_flow.flow import Flow
 
 
 class Middleware():
 
+    # the following methods are only called on the first middleware,
+    # either at the beginning of the flow or nested flow
     def __rshift__(self, middleware):
-        s = stack.Stack(self)
-        s._add_middleware(middleware)
+        s = Flow(self)
+        s.__rshift__(middleware)
         return s
 
-    def __call__(self):
-        pass
-
     def __lt__(self, conditions: tuple):
-        s = stack.Stack(self)
+        s = Flow(self)
         s.add_fork(conditions)
         return s
 
 
+class DecoratorMiddleware(Middleware):
+    def __init__(self):
+        self.next: Flow = None
