@@ -124,3 +124,23 @@ def test_nested():
         'error': 'decided by zero',
         'foo': 0
     }
+
+    flow = NestedService() >> (lambda foo: {'result1': 1/foo}) >> (lambda bar: {'result2': 2/bar})
+    assert flow({'foo': 1, 'bar': 2}) == {
+        'bar': 2,
+        'foo': 1,
+        'result1': 1,
+        'result2': 1
+    }
+
+    class DoNothing(Middleware):
+        def __call__(self):
+            return {}
+
+    flow = DoNothing() >> NestedService() >> (lambda foo: {'result1': 1/foo}) >> (lambda bar: {'result2': 2/bar})
+    assert flow({'foo': 1, 'bar': 2}) == {
+        'bar': 2,
+        'foo': 1,
+        'result1': 1,
+        'result2': 1
+    }
