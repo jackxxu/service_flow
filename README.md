@@ -2,7 +2,7 @@
 
 <img src='https://www.worksmartsystems.com/images/C3_4StationL3.gif' width="35%" height="35%" align="right" />
 
-A small, simple, and elegant component/function orchestration framework for Python, `service-flow` enables separation of a functionality into single-responsibility and bite-size functions/service objects, which are testable and reuseable. It further helps with readability and maintainability of the embedding application.
+A small, simple, and elegant component/function orchestration framework for Python, `service-flow` enables separation of a functionality into single-responsibility and bite-size functions/service objects, which are testable and reuseable. It further helps with readability and maintainability of the embedding application. It supports both sync and async middlewares.
 
 - [Implementation](#implementation)
   - [flow](#flow)
@@ -12,6 +12,7 @@ A small, simple, and elegant component/function orchestration framework for Pyth
     - [example](#example)
       - [basic service](#basic-service)
       - [decorator service](#decorator-service)
+    - [async service](#async-service)
     - [conventions](#conventions)
       - [initialization parameters](#initialization-parameters)
       - [function parameters](#function-parameters)
@@ -97,6 +98,24 @@ class ExceptionHandler(DecoratorMiddleware):
             self.next(context)
         except ZeroDivisionError:
             return {'error': 'decided by zero'}
+```
+
+#### async service
+
+As asyncio was introduced in python version 3.4, `service-flow` now supports async middlewares. here is example:
+
+```python
+import aiohttp
+
+class GetPythonSiteHTML(Middleware):
+    def __init__(self, increment):
+        self.increment = increment
+
+    async def __call__(self, bar: list):
+      async with aiohttp.ClientSession() as session:
+          async with session.get('http://python.org') as response:
+              html = await response.text()
+      return await {'response': html}
 ```
 
 #### conventions

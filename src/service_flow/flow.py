@@ -6,30 +6,40 @@ from service_flow.timer import measure_timing
 import logging
 logger = logging.getLogger(__name__)
 
+
 class Flow():
     def __init__(self, m1: Callable):
         self.middlewares = []
         self.last_flow = self
+        self.async_mode = False
         self._add_middleware(m1)
 
     @measure_timing
     def __call__(self, context: dict={}):
-        for middleware, kw_nms in self.middlewares:
-            # if the middleware has a "context" parameter, then pass the entire context
-            if kw_nms == ['context']:
-                context_mods = middleware(context)
-            else:
-                # for each middleware, get the arguments from the context
-                kwargs = {key: context[key] for key in kw_nms if key in context}
-                # calls the middleware and get the result as modifications to the context
-                context_mods = middleware(**kwargs)
-            if isinstance(context_mods, dict): # if the middleware returns a dict, update the context
-                context.update(context_mods)
-            elif context_mods == None: # if the middleware does not return anything, continue
-                pass
-            else: # if the middleware returns something else, raise an exception
-                logger.warning(f"{type(middleware)}'s return value of type {type(context_mods)} is ignored in service-flow because it is not of type dict")
+        return self.__run__(context) if self.async_mode == False else self.__async_run__(context)
 
+    def __run__(self, context: dict):
+        for middleware, kw_nms in self.middlewares:
+            kwargs = self.middleware_kwargs(context, kw_nms)
+            context_mods = middleware(**kwargs)
+            context.update(context_mods if isinstance(context_mods, dict) else {})
+        return context
+
+    @staticmethod
+    def middleware_kwargs(context: dict, kw_nms: list):
+        if kw_nms == ['context']:  # context is a reserved argument keyword
+            # if the middleware has a "context" parameter, then pass the entire context
+            return {'context': context}
+        else:
+            # calls the middleware and get the result as modifications to the context
+            return {key: context[key] for key in kw_nms if key in context}
+
+    async def __async_run__(self, context: dict):
+        for middleware, kw_nms in self.middlewares:
+            kwargs = self.middleware_kwargs(context, kw_nms)
+            # get the middleware output a la sync/async
+            context_mods = await middleware(**kwargs) if middleware.is_async else middleware(**kwargs)
+            context.update(context_mods if isinstance(context_mods, dict) else {})
         return context
 
     # handle >> operator for the sequential flow
@@ -38,7 +48,7 @@ class Flow():
         # then it is a nested flow, and we need to add the new middleware to the nested flow
         if hasattr(self.last_middleware, 'next'):
             # for decorator pattern, the next middleware is added to the nested flow
-            # so we are creating the new flow and keep its as an instance variable, and 
+            # so we are creating the new flow and keep its as an instance variable, and
             # next middleware will be added to this flow instead of the original one
             flow = Flow(middleware)
             self.last_middleware.next = flow
@@ -59,6 +69,11 @@ class Flow():
         return self
 
     def _add_middleware(self, middleware):
+        # if middleware is an async function, then set the async_mode to True
+        if not self.async_mode and \
+            (not isinstance(middleware, LambdaType)) and middleware.is_async:
+            self.async_mode = True
+
         self.middlewares.append((middleware, Flow.arguments(middleware)))
 
     def add_fork(self, conditions: tuple):
