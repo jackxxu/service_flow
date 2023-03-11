@@ -88,14 +88,14 @@ class InplaceModification(Middleware):
 
 As the name implies, decorator service works similiarly to a python decorator that is nested on top of the subsequent flow.
 
-A decorator service inherits from `service_flow.middleware.DecoratorMiddleware` and has one additional instance variable `next`, which is the reference to the subsequent flow.
+A decorator service inherits from `service_flow.middleware.DecoratorMiddleware` and has one additional instance variable `app`, which is the reference to the subsequent flow.
 
 
 ```python
 class ExceptionHandler(DecoratorMiddleware):
     def __call__(self, context):
         try:
-            self.next(context)
+            self.app(context)
         except ZeroDivisionError:
             return {'error': 'decided by zero'}
 ```

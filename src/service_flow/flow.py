@@ -46,12 +46,12 @@ class Flow():
     def __rshift__(self, middleware):
         # if the last middleware is a DecoratorMiddleware,
         # then it is a nested flow, and we need to add the new middleware to the nested flow
-        if hasattr(self.last_middleware, 'next'):
+        if hasattr(self.last_middleware, 'app'):
             # for decorator pattern, the next middleware is added to the nested flow
             # so we are creating the new flow and keep its as an instance variable, and
             # next middleware will be added to this flow instead of the original one
             flow = Flow(middleware)
-            self.last_middleware.next = flow
+            self.last_middleware.app = flow
             self.last_flow = flow
         else:
             self.last_flow._add_middleware(middleware)

@@ -22,4 +22,4 @@ class Middleware():
 
 class DecoratorMiddleware(Middleware):
     def __init__(self):
-        self.next: Flow = None
+        self.app: Flow = None

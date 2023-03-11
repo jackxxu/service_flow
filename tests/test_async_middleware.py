@@ -24,7 +24,7 @@ class ReturnNone2(Middleware):
 class NestedService2(DecoratorMiddleware):
     async def __call__(self, context):
         try:
-            return await self.next(context)
+            return await self.app(context)
         except ZeroDivisionError:
             return {'error': 'decided by zero'}
 

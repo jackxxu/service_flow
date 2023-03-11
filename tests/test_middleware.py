@@ -94,7 +94,7 @@ def test_fork3():
 class NestedService(DecoratorMiddleware):
     def __call__(self, context):
         try:
-            self.next(context)
+            self.app(context)
         except ZeroDivisionError:
             return {'error': 'decided by zero'}
 
