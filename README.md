@@ -2,7 +2,7 @@
 
 <img src='https://www.worksmartsystems.com/images/C3_4StationL3.gif' width="35%" height="35%" align="right" />
 
-A small, simple, and elegant component/function orchestration framework for Python, `service-flow` enables separation of a functionality into single-responsibility and bite-size functions/service objects, which are testable and reuseable. It further helps with readability and maintainability of the embedding application. It supports both sync and async middlewares.
+A small, simple, and elegant component/function orchestration framework for Python, `service-flow` enables separation of a functionality into single-responsibility and bite-size functions/service objects, which are testable and reuseable. It further helps with readability and maintainability of the embedding application. It supports both sync and async services.
 
 - [Implementation](#implementation)
   - [flow](#flow)
@@ -13,6 +13,7 @@ A small, simple, and elegant component/function orchestration framework for Pyth
       - [basic service](#basic-service)
       - [decorator service](#decorator-service)
     - [async service](#async-service)
+    - [lambda service](#lambda-service)
     - [conventions](#conventions)
       - [initialization parameters](#initialization-parameters)
       - [function parameters](#function-parameters)
@@ -100,6 +101,7 @@ class ExceptionHandler(DecoratorMiddleware):
             return {'error': 'decided by zero'}
 ```
 
+
 #### async service
 
 As asyncio was introduced in python version 3.4, `service-flow` now supports async middlewares. here is example:
@@ -117,6 +119,13 @@ class GetPythonSiteHTML(Middleware):
               html = await response.text()
       return await {'response': html}
 ```
+
+#### lambda service
+
+`service-flow` supports simple functionality as a service in the form a lambda type. Note the following:
+
+1. a lambda service is always sync
+2. a lambda service can not be the first service on stack.
 
 #### conventions
 

@@ -1,6 +1,7 @@
 import inspect
 from types import LambdaType
 from typing import Callable
+import service_flow
 from service_flow.fork import Fork
 from service_flow.timer import measure_timing
 import logging
@@ -70,8 +71,10 @@ class Flow():
 
     def _add_middleware(self, middleware):
         # if middleware is an async function, then set the async_mode to True
-        if not self.async_mode and \
-            (not isinstance(middleware, LambdaType)) and middleware.is_async:
+        if isinstance(middleware, LambdaType):
+            middleware = service_flow.middleware.LambdaMiddleware(middleware)
+
+        if not self.async_mode and middleware.is_async:
             self.async_mode = True
 
         self.middlewares.append((middleware, Flow.arguments(middleware)))
@@ -85,7 +88,4 @@ class Flow():
 
     @staticmethod
     def arguments(middleware):
-        if isinstance(middleware, LambdaType):  # support for lambda func
-            return inspect.getfullargspec(middleware).args
-        else:  # Middleware object
-            return inspect.getfullargspec(middleware.__call__).args[1:]
+        return [x for x in inspect.signature(middleware).parameters.keys()]

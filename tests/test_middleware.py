@@ -70,27 +70,6 @@ def test_fork3():
     with pytest.raises(ForkException):
         assert flow({'scenario': 'scenario3', 'foo': 1, 'bar': [1, 2]})
 
-# def test_fork():
-#     flow = SetScenario() < \
-#             ('scenario', {
-#                 'scenario1': lambda : {'results': '1'},
-#                 'scenario2': lambda : {'results': '2'},
-#                 })
-#     assert flow({'scenario': 'scenario1'}) == {'results': '1', 'scenario': 'scenario1'}
-#     assert flow({'scenario': 'scenario2'}) == {'results': '2', 'scenario': 'scenario2'}
-
-
-# def test_fork2():
-#     flow = SetScenario() >> \
-#             (lambda scenario : {'value': scenario}) < \
-#             ('scenario', {
-#                 'scenario1': lambda : {'results': '1'},
-#                 'scenario2': lambda : {'results': '2'},
-#                 })
-#     assert flow({'scenario': 'scenario1'}) == {'results': '1', 'scenario': 'scenario1', 'value': 'scenario1'}
-#     assert flow({'scenario': 'scenario2'}) == {'results': '2', 'scenario': 'scenario2', 'value': 'scenario2'}
-
-
 class NestedService(DecoratorMiddleware):
     def __call__(self, context):
         try:
