@@ -20,6 +20,19 @@ class Middleware():
     def is_async(self):
         return inspect.iscoroutinefunction(self.__call__)
 
+class LambdaMiddleware(Middleware):
+    def __init__(self, func):
+        self.func = func
+        # set the function signature to the middleware
+        self.__signature__ = inspect.signature(func)
+
+    @cached_property
+    def is_async(self):
+        return False  # lambda is always sync
+
+    def __call__(self, **kwargs):
+        return self.func(**kwargs)
+
 class DecoratorMiddleware(Middleware):
     def __init__(self):
         self.app: Flow = None
